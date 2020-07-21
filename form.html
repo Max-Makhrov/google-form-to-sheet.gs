@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <base target="_top">
+      <!-- https://stackoverflow.com/questions/37688873/responsive-iframe-with-fixed-div-beneath-it -->
+      <style>
+         .iframe-wrapper{
+         position:fixed;
+         top:0;left:0;right:0;bottom:50px;
+         }
+         .iframe-wrapper iframe{
+         width:100%;
+         height:100%;
+         border:none;
+         }
+         #info {
+         display:none;
+         }
+      </style>
+   </head>
+   <body>
+      <div id = "info">Loading...</div>
+      <div id = "nav-google-form" class="iframe-wrapper">
+         <iframe id = "google-form" src="" width="640" height="1331" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      </div>
+      <div id = "error1">Please select row with correct response ID in column A</div>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <script>
+         // on document load.. 
+         $(function() {
+           // Start polling for updates    
+           $('#error1').hide(); // to prevent showing error on start
+           poll(); 
+         }); 
+         /**
+          * Poll a server-side function at the given interval, to have
+          * results passed to a successHandler callback.
+          *
+          * http://stackoverflow.com/a/24773178/1677912
+          *
+          * @param {Number} interval   (optional) Time in ms between polls.
+          *                            Default is 2s (2000ms)
+          */
+         function poll(interval) {
+           interval = interval || 500;
+           setTimeout(function() {
+             google.script.run
+               .withSuccessHandler(showRecord)
+               .getSelectedFormResponse();
+           }, interval);
+         };
+         function showRecord(record) {
+           if (record) {
+             let parent = $("#nav-google-form");
+             if (record.value && record.url) {
+               $('#error1').hide();
+               // check values are the same
+               var oldvalue  = $('#info').text();
+               var value = record.value;
+               if (oldvalue !== value) {
+                 // set value of the id
+                 $('#info').text(value); 
+                 // check the element exists
+                 let exists = value;
+                 if($("#" + value).length == 0) {
+                   //it doesn't exist
+                   exists = false;
+                 }
+                 // hide all child elements of the div for forms
+                 parent.children().hide();
+                 // create new node if needed
+                 if (!exists)
+                 {
+                   // create new form element and embed the form
+                   $("#google-form").clone().attr("id",value).attr('src', record.url).appendTo(parent);
+                 }
+                 // unhide error element
+                 $("#" + value).show();
+               }
+             }
+             else
+             {
+               // hide all chld elements of the div for forms
+               parent.children().hide();
+               $('#error1').show();
+             }
+           }
+           // next call
+           poll();
+         }  
+      </script>
+   </body>
+</html>

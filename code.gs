@@ -1,4 +1,5 @@
 const C_FORM_ID = '1nGvvEzQHN1n3CmKxVZ0rcjO65jOI4HjqV8FzemoiYQA';
+const C_FORM_RESPONSES_SHEET = 'Form Responses 1';
 const C_COLUMN_4_RESPONSEID = 1; // the column for masting of form responses URLs
 
 // sample https://docs.google.com/spreadsheets/d/1le6FmDl3UBDsrZQH_-Db0DrrSU4bvRcF4150zarsgbQ
@@ -45,16 +46,16 @@ function getFormPrefilledUrl_(formId, responseId)
 //////////////////////////////////////////////// The code to get form edit URL
 // Create a new trigger to run this funciton onFormSubmit
 function addResponseUrl_(e) {
-  var formResponses = 
-      {
-        'Form Responses 1': // sheet name where form responses are pasted
-        {
-          column: C_COLUMN_4_RESPONSEID,  // the column for masting of form responses URLs
-          formId: C_FORM_ID
-        }
-        // add more forms if multiple forms are linked to the sheet.
-      };
-  
+  var formResponses = {};        
+  formResponses[C_FORM_RESPONSES_SHEET] =
+    //          ^ sheet name where form responses are pasted
+    {
+      column: C_COLUMN_4_RESPONSEID,  // the column for masting of form responses URLs
+      formId: C_FORM_ID
+    };
+  // add more forms if multiple forms are linked to the sheet.
+
+
   // use try...catch to see script errors
   try
   {    

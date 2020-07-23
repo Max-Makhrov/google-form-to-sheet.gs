@@ -74,6 +74,14 @@
                    // create new form element and embed the form
                    $("#google-form").clone().attr("id",value).attr('src', record.url).appendTo(parent);
                  }
+                 else
+                 {
+                   if ($("#" + value).attr('src') !== record.url)
+                   {
+                     // append the form in case it was submitted
+                     $("#" + value).attr('src', record.url); 
+                   }
+                 }
                  // unhide error element
                  $("#" + value).show();
                }
